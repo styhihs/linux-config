@@ -59,12 +59,12 @@ set tags=./tags;/
 nmap <leader>d :NERDTreeTabsToggle<CR>
 nmap <leader>t :TagbarToggle<CR>
 
-
 """""""""""
 " Plugins
 """""""""""
+filetype off
 set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#rc()
+call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'itchyny/lightline.vim'
@@ -75,6 +75,7 @@ Plugin 'majutsushi/tagbar'
 "Plugin 'vim-airline/vim-airline'
 "Plugin 'vim-airline/vim-airline-themes'
 
+call vundle#end()
 filetype plugin indent on
 
 """""""""""""""""""
@@ -91,9 +92,12 @@ let g:lightline = {
     \ 'colorscheme': 'wombat',
     \ 'active': {
     \   'left': [
-    \       ['mode', 'paste'],
-    \       ['fugitive', 'readonly', 'filename', 'modified'],
+    \     ['mode', 'paste'],
+    \     ['fugitive', 'readonly', 'filename', 'modified'],
     \   ]
+    \ },
+    \ 'component_function': {
+    \   'filename': 'LightlineFilename',
     \ },
     \ 'component': {
     \   'fugitive': '%{exists("*fugitive#head") ? fugitive#head() : ""}'
@@ -124,12 +128,21 @@ function! s:lightline_update()
     endtry
 endfunction
 
+function! LightlineFilename()
+  let root = fnamemodify(get(b:, 'git_dir'), ':h')
+  let path = expand('%:p')
+  if path[:len(root)-1] ==# root
+    return path[len(root)+1:]
+  endif
+  return expand('%')
+endfunction
+
 """"""""""""
 " NERDTree
 """"""""""""
 "autocmd VimEnter * NERDTree
 "autocmd VimEnter * wincmd p
-let g:nerdtree_tabs_open_on_console_startup=1
+"let g:nerdtree_tabs_open_on_console_startup=1
 
 """""""""""""""
 " Vim-airline
